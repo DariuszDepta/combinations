@@ -1,0 +1,31 @@
+version: '3'
+
+vars:
+  FEATURES: '[backtrace,staking,stargate,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_3,cosmwasm_1_4,cosmwasm_2_0,cosmwasm_2_1]'
+  POSTFIX: '"\""'
+  BUILD_PREFIX: '"      - cmd: cargo +stable build --features \""'
+  TEST_PREFIX: '"      - cmd: cargo +stable test --features \""'
+  CLIPPY_PREFIX: '"      - cmd: cargo +stable clippy --features \""'
+
+silent: true
+
+tasks:
+
+  run:
+    desc: Runs the combinations generator
+    cmds:
+      - cmd: erlc combinations.erl
+      - cmd: erl -noshell -eval 'combinations:gen([1,2,3,4,5]).' -s init stop
+
+  mt:
+    desc: Runs the combinations generator for build commands of MultiTest
+    cmds:
+      - cmd: erlc combinations.erl
+      - cmd: echo "{{.FEATURES}}"
+      - cmd: echo "{{.BUILD_PREFIX}}"
+      - cmd: echo "{{.BUILD_POSTFIX}}"
+      - cmd: erl -noshell -eval 'combinations:gen({{.FEATURES}},{{.BUILD_PREFIX}},{{.POSTFIX}}).' -s init stop
+      - cmd: erl -noshell -eval 'combinations:gen({{.FEATURES}},{{.TEST_PREFIX}},{{.POSTFIX}}).' -s init stop
+      - cmd: erl -noshell -eval 'combinations:gen({{.FEATURES}},{{.CLIPPY_PREFIX}},{{.POSTFIX}}).' -s init stop
+
+

@@ -1,15 +1,17 @@
 -module(combinations).
 
--export([gen/1]).
+-export([gen/1, gen/3]).
 
 %%%----------------------------------------------------------------------------
 %%% Public functions
 %%%----------------------------------------------------------------------------
 
 gen(Elements) when is_list(Elements) ->
+  gen(Elements, "", "").
+
+gen(Elements, Prefix, Postfix) ->
   Result = lists:sort(fun sort_elements/2, row(Elements, 1, 1 bsl length(Elements), [])),
-  lists:foreach(fun(Element) -> print(Element) end, Result),
-  io:format("Generated ~p combinations.~n", [length(Result)]).
+  lists:foreach(fun(Element) -> io:format("~s", [Prefix]), print(Element, Postfix) end, Result).
 
 %%%----------------------------------------------------------------------------
 %%% Private functions
@@ -33,12 +35,14 @@ sort_elements(A, B) when length(A) == length(B) ->
 sort_elements(_, _) ->
   false.
 
-print([]) ->
+print([], Postfix) when Postfix == "" ->
   io:format("~n");
-print([H|T]) when length(T) > 0->
+print([], Postfix) ->
+  io:format("~s~n", [Postfix]);
+print([H | T], Postfix) when length(T) > 0 ->
   io:format("~p ", [H]),
-  print(T);
-print([H|T]) ->
+  print(T, Postfix);
+print([H | T], Postfix) ->
   io:format("~p", [H]),
-  print(T).
+  print(T, Postfix).
 
