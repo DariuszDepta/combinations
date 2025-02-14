@@ -17,7 +17,7 @@
 
 Feature combinations generator for MultiTest.
 
-> See task commands for details.
+> See [task](./Taskfile.yml) commands for details.
 
 ## License
 
